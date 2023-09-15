@@ -8,12 +8,22 @@ function Square({ value, onSquareClick }) {
   );
 }
 
+function Row({ indexes, state, setState }) {
+  return (
+    <div className="board-row">
+      {indexes.map((index) => (
+        <Square value={state[index]} onSquareClick={() => setState(index)} />
+      ))}
+    </div>
+  );
+}
+
 export default function Board() {
   const [xturn, setXTurn] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null));
-  
+
   function handleClick(index) {
-    if(calculateWinner(squares) || squares[index]) return;
+    if (calculateWinner(squares) || squares[index]) return;
 
     const nextSquares = squares.slice();
     nextSquares[index] = xturn ? "X" : "O";
@@ -23,7 +33,7 @@ export default function Board() {
 
   let winner = calculateWinner(squares);
   let status;
-  if(winner) {
+  if (winner) {
     status = `Winner: ${winner}`;
   } else {
     status = `Next player: ${xturn ? "X" : "O"}`;
@@ -32,21 +42,9 @@ export default function Board() {
   return (
     <div>
       <div className="status">{status}</div>
-      <div className="board-row">
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
-      </div>
+      <Row indexes={[0, 1, 2]} state={squares} setState={handleClick} />
+      <Row indexes={[3, 4, 5]} state={squares} setState={handleClick} />
+      <Row indexes={[6, 7, 8]} state={squares} setState={handleClick} />
     </div>
   );
 }
@@ -60,7 +58,7 @@ function calculateWinner(squares) {
     [1, 4, 7],
     [2, 5, 8],
     [0, 4, 8],
-    [2, 4, 6]
+    [2, 4, 6],
   ];
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
