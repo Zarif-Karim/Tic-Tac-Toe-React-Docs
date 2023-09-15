@@ -7,6 +7,6 @@ import App from "./App";
 const root = createRoot(document.getElementById("root"));
 root.render(
   <StrictMode>
-    <App />
+    <App rows={3} cols={3} />
   </StrictMode>
 );

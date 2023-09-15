@@ -54,7 +54,7 @@ function Board({ xturn, squares, onPlay }) {
   5. Display the location for each move in the format (row, col) in the move history list.
 */
 
-export default function Game() {
+export default function Game({rows, cols}) {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
   const xturn = currentMove % 2 === 0;
