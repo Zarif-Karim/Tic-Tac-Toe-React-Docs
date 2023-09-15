@@ -22,7 +22,7 @@ function Row({ indexes, state, setState }) {
   );
 }
 
-function Board({ xturn, squares, onPlay }) {
+function Board({ rows, cols, xturn, squares, onPlay }) {
   function handleClick(index) {
     if (calculateWinner(squares) || squares[index]) return;
 
@@ -94,7 +94,7 @@ export default function Game({ rows, cols }) {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xturn={xturn} squares={currentSquares} onPlay={handlePlay} />
+        <Board rows={rows} cols={cols} xturn={xturn} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
