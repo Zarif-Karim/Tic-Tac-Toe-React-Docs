@@ -39,12 +39,27 @@ function Board({ rows, cols, xturn, squares, onPlay }) {
     status = `Next player: ${xturn ? "X" : "O"}`;
   }
 
+  function getCols(rowNo) {
+    const colInd = [];
+    for (let c = 0; c < cols; c++) {
+      colInd.push(rowNo * cols + c);
+    }
+    return colInd;
+  }
+
   return (
     <div>
       <div className="status">{status}</div>
-      <Row indexes={[0, 1, 2]} state={squares} setState={handleClick} />
-      <Row indexes={[3, 4, 5]} state={squares} setState={handleClick} />
-      <Row indexes={[6, 7, 8]} state={squares} setState={handleClick} />
+      {Array(rows)
+        .fill()
+        .map((_, i) => (
+          <Row
+            indexes={getCols(i)}
+            state={squares}
+            setState={handleClick}
+            key={i}
+          />
+        ))}
     </div>
   );
 }
@@ -94,7 +109,13 @@ export default function Game({ rows, cols }) {
   return (
     <div className="game">
       <div className="game-board">
-        <Board rows={rows} cols={cols} xturn={xturn} squares={currentSquares} onPlay={handlePlay} />
+        <Board
+          rows={rows}
+          cols={cols}
+          xturn={xturn}
+          squares={currentSquares}
+          onPlay={handlePlay}
+        />
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
