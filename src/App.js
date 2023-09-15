@@ -12,7 +12,11 @@ function Row({ indexes, state, setState }) {
   return (
     <div className="board-row">
       {indexes.map((index, key) => (
-        <Square key={key} value={state[index]} onSquareClick={() => setState(index)} />
+        <Square
+          key={key}
+          value={state[index]}
+          onSquareClick={() => setState(index)}
+        />
       ))}
     </div>
   );
@@ -54,8 +58,8 @@ function Board({ xturn, squares, onPlay }) {
   5. Display the location for each move in the format (row, col) in the move history list.
 */
 
-export default function Game({rows, cols}) {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
+export default function Game({ rows, cols }) {
+  const [history, setHistory] = useState([Array(rows * cols).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
   const xturn = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
@@ -67,16 +71,16 @@ export default function Game({rows, cols}) {
   }
 
   function jumpTo(nextMove) {
-    setCurrentMove(nextMove)
+    setCurrentMove(nextMove);
   }
 
   const moves = history.map((_, move) => {
-    if(move === currentMove) {
+    if (move === currentMove) {
       return (
         <li key={move}>
           <b>You are at move #{move}</b>
         </li>
-      )
+      );
     }
 
     const desc = move ? `Go to move #${move}` : "Go to game start";
