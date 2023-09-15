@@ -18,17 +18,14 @@ function Row({ indexes, state, setState }) {
   );
 }
 
-export default function Board() {
-  const [xturn, setXTurn] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null));
-
+function Board({ xturn, squares, onPlay }) {
+  
   function handleClick(index) {
     if (calculateWinner(squares) || squares[index]) return;
 
     const nextSquares = squares.slice();
     nextSquares[index] = xturn ? "X" : "O";
-    setSquares(nextSquares);
-    setXTurn(!xturn);
+    onPlay(nextSquares); 
   }
 
   let winner = calculateWinner(squares);
@@ -45,6 +42,28 @@ export default function Board() {
       <Row indexes={[0, 1, 2]} state={squares} setState={handleClick} />
       <Row indexes={[3, 4, 5]} state={squares} setState={handleClick} />
       <Row indexes={[6, 7, 8]} state={squares} setState={handleClick} />
+    </div>
+  );
+}
+
+export default function Game() {
+  const [xturn, setXTurn] = useState(true);
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const currentSquares = history[history.length - 1];
+
+  function handlePlay(nextSquares) {
+    setHistory([...history, nextSquares]);
+    setXTurn(!xturn);
+  }
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board xturn={xturn} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>{/*TODO*/}</ol>
+      </div>
     </div>
   );
 }
