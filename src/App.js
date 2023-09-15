@@ -8,7 +8,12 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-function Row({ indexes, state, setState }) {
+function Row({ rowNo, cols, state, setState }) {
+  const indexes = [];
+  for (let c = 0; c < cols; c++) {
+    indexes.push(rowNo * cols + c);
+  }
+
   return (
     <div className="board-row">
       {indexes.map((index, key) => (
@@ -39,14 +44,6 @@ function Board({ rows, cols, xturn, squares, onPlay }) {
     status = `Next player: ${xturn ? "X" : "O"}`;
   }
 
-  function getCols(rowNo) {
-    const colInd = [];
-    for (let c = 0; c < cols; c++) {
-      colInd.push(rowNo * cols + c);
-    }
-    return colInd;
-  }
-
   return (
     <div>
       <div className="status">{status}</div>
@@ -54,7 +51,8 @@ function Board({ rows, cols, xturn, squares, onPlay }) {
         .fill()
         .map((_, i) => (
           <Row
-            indexes={getCols(i)}
+            rowNo={i}
+            cols={cols}
             state={squares}
             setState={handleClick}
             key={i}
