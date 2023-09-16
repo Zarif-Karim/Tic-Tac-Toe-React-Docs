@@ -2,7 +2,10 @@ import React, { useState } from "react";
 
 function Square({ value, onSquareClick, isWinSquare }) {
   return (
-    <button className={"square ".concat(isWinSquare ? 'win-path' : '')} onClick={onSquareClick}>
+    <button
+      className={"square ".concat(isWinSquare ? "win-path" : "")}
+      onClick={onSquareClick}
+    >
       {value}
     </button>
   );
@@ -34,7 +37,7 @@ function Board({ rows, cols, xturn, squares, onPlay, winPath }) {
 
     const nextSquares = squares.slice();
     nextSquares[index] = xturn ? "X" : "O";
-    onPlay(nextSquares);
+    onPlay(nextSquares, index);
   }
 
   return (
@@ -61,21 +64,24 @@ function Board({ rows, cols, xturn, squares, onPlay, winPath }) {
   2. [Done] Rewrite Board to use two loops to make the squares instead of hardcoding them.
   3. [Done] Add a toggle button that lets you sort the moves in either ascending or descending order.
   4. [Done] When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw).
-  5. Display the location for each move in the format (row, col) in the move history list.
+  5. [Done] Display the location for each move in the format (row, col) in the move history list.
 */
 
 export default function Game({ rows, cols }) {
   const [history, setHistory] = useState([Array(rows * cols).fill(null)]);
+  const [indexHistory, setIndexHistory] = useState([null]);
   const [currentMove, setCurrentMove] = useState(0);
   const xturn = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
   const [isAscending, setIsAscending] = useState(true);
 
-  function handlePlay(nextSquares) {
+  function handlePlay(nextSquares, index) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setIndexHistory([...indexHistory.slice(0, currentMove + 1), index]);
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
+    console.log(indexHistory);
   }
 
   function jumpTo(nextMove) {
@@ -83,18 +89,12 @@ export default function Game({ rows, cols }) {
   }
 
   const moves = history.map((_, move) => {
-    if (move === currentMove) {
-      return (
-        <li key={move}>
-          <b>You are at move #{move}</b>
-        </li>
-      );
-    }
-
-    const desc = move ? `Go to move #${move}` : "Go to game start";
+    const row = Math.floor(indexHistory[move] / 3) + 1;
+    const col = (indexHistory[move] % 3) + 1;
+    const desc = move ? `Go to move #${move}: (${row} ${col})` : "Go to game start";
     return (
       <li key={move}>
-        <button onClick={() => jumpTo(move)}>{desc}</button>
+          <button onClick={() => jumpTo(move)}>{desc}</button>
       </li>
     );
   });
@@ -126,7 +126,10 @@ export default function Game({ rows, cols }) {
         <ol>
           <button onClick={() => setIsAscending(!isAscending)}>Toggle</button>
         </ol>
-        <ol reversed={!isAscending}>{isAscending ? moves : moves.reverse()}</ol>
+        <ol reversed={!isAscending}>
+          {isAscending ? moves : moves.reverse()}
+          <li>You are at move #{history.length}</li>
+        </ol>
       </div>
     </div>
   );
@@ -156,6 +159,6 @@ function calculateWinner(squares) {
   }
   return {
     winner,
-    path
+    path,
   };
 }
