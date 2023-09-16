@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-function Square({ value, onSquareClick }) {
+function Square({ value, onSquareClick, isWinSquare }) {
   return (
-    <button className="square" onClick={onSquareClick}>
+    <button className={"square ".concat(isWinSquare ? 'win-path' : '')} onClick={onSquareClick}>
       {value}
     </button>
   );
@@ -36,17 +36,8 @@ function Board({ rows, cols, xturn, squares, onPlay }) {
     onPlay(nextSquares);
   }
 
-  let winner = calculateWinner(squares);
-  let status;
-  if (winner) {
-    status = `Winner: ${winner}`;
-  } else {
-    status = `Next player: ${xturn ? "X" : "O"}`;
-  }
-
   return (
     <div>
-      <div className="status">{status}</div>
       {Array(rows)
         .fill()
         .map((_, i) => (
@@ -106,24 +97,35 @@ export default function Game({ rows, cols }) {
     );
   });
 
+  // let { winner, path } = calculateWinner(currentSquares);
+  let winner = calculateWinner(currentSquares);
+  let status;
+  if (winner) {
+    status = `Winner: ${winner}`;
+  } else if (currentMove === 9) {
+    status = `Draw!`;
+  } else {
+    status = `Next player: ${xturn ? "X" : "O"}`;
+  }
+
   return (
     <div className="game">
       <div className="game-board">
+        <div className="status">{status}</div>
         <Board
           rows={rows}
           cols={cols}
           xturn={xturn}
           squares={currentSquares}
           onPlay={handlePlay}
+          // winPath={path}
         />
       </div>
       <div className="game-info">
         <ol>
           <button onClick={() => setIsAscending(!isAscending)}>Toggle</button>
         </ol>
-        <ol reversed={!isAscending}>
-          {isAscending ? moves : moves.reverse()}
-        </ol>
+        <ol reversed={!isAscending}>{isAscending ? moves : moves.reverse()}</ol>
       </div>
     </div>
   );
@@ -143,8 +145,14 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      // winner = squares[a];
+      // path = [a, b, c];
       return squares[a];
     }
   }
+  // return {
+  //   winner,
+  //   path,
+  // };
   return null;
 }
