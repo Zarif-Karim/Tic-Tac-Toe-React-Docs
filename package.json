@@ -9,7 +9,7 @@
     "react-scripts": "1.0.0"
   },
   "name": "Tic-Tac-Toe",
-  "description": "",
+  "description": "Learning react from the docs",
   "version": "0.0.0",
   "scripts": {
     "start": "react-scripts start",
