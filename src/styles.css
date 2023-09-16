@@ -90,3 +90,8 @@ body {
 .game-info {
   margin-left: 20px;
 }
+
+.win-path {
+  color:chartreuse;
+  font-weight: bold;
+}

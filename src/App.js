@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
-function Square({ value, onSquareClick }) {
+function Square({ value, onSquareClick, isWinSquare }) {
   return (
-    <button className="square" onClick={onSquareClick}>
+    <button className={"square ".concat(isWinSquare ? 'win-path' : '')} onClick={onSquareClick}>
       {value}
     </button>
   );
 }
 
-function Row({ rowNo, cols, state, setState }) {
+function Row({ rowNo, cols, state, setState, winPath }) {
   const indexes = [];
   for (let c = 0; c < cols; c++) {
     indexes.push(rowNo * cols + c);
@@ -21,32 +21,24 @@ function Row({ rowNo, cols, state, setState }) {
           key={key}
           value={state[index]}
           onSquareClick={() => setState(index)}
+          isWinSquare={winPath && winPath.includes(index)}
         />
       ))}
     </div>
   );
 }
 
-function Board({ rows, cols, xturn, squares, onPlay }) {
+function Board({ rows, cols, xturn, squares, onPlay, winPath }) {
   function handleClick(index) {
-    if (calculateWinner(squares) || squares[index]) return;
+    if (calculateWinner(squares).winner || squares[index]) return;
 
     const nextSquares = squares.slice();
     nextSquares[index] = xturn ? "X" : "O";
     onPlay(nextSquares);
   }
 
-  let winner = calculateWinner(squares);
-  let status;
-  if (winner) {
-    status = `Winner: ${winner}`;
-  } else {
-    status = `Next player: ${xturn ? "X" : "O"}`;
-  }
-
   return (
     <div>
-      <div className="status">{status}</div>
       {Array(rows)
         .fill()
         .map((_, i) => (
@@ -55,6 +47,7 @@ function Board({ rows, cols, xturn, squares, onPlay }) {
             cols={cols}
             state={squares}
             setState={handleClick}
+            winPath={winPath}
             key={i}
           />
         ))}
@@ -67,7 +60,7 @@ function Board({ rows, cols, xturn, squares, onPlay }) {
   1. [Done] For the current move only, show “You are at move #…” instead of a button.
   2. [Done] Rewrite Board to use two loops to make the squares instead of hardcoding them.
   3. [Done] Add a toggle button that lets you sort the moves in either ascending or descending order.
-  4. When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw).
+  4. [Done] When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw).
   5. Display the location for each move in the format (row, col) in the move history list.
 */
 
@@ -106,30 +99,43 @@ export default function Game({ rows, cols }) {
     );
   });
 
+  let { winner, path } = calculateWinner(currentSquares);
+  let status;
+  if (winner) {
+    status = `Winner: ${winner}`;
+  } else if (currentMove === 9) {
+    status = `Draw!`;
+  } else {
+    status = `Next player: ${xturn ? "X" : "O"}`;
+  }
+
   return (
     <div className="game">
       <div className="game-board">
+        <div className="status">{status}</div>
         <Board
           rows={rows}
           cols={cols}
           xturn={xturn}
           squares={currentSquares}
           onPlay={handlePlay}
+          winPath={path}
         />
       </div>
       <div className="game-info">
         <ol>
           <button onClick={() => setIsAscending(!isAscending)}>Toggle</button>
         </ol>
-        <ol reversed={!isAscending}>
-          {isAscending ? moves : moves.reverse()}
-        </ol>
+        <ol reversed={!isAscending}>{isAscending ? moves : moves.reverse()}</ol>
       </div>
     </div>
   );
 }
 
 function calculateWinner(squares) {
+  let winner = null;
+  let path = null;
+
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -143,8 +149,13 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      winner = squares[a];
+      path = [a, b, c];
+      break;
     }
   }
-  return null;
+  return {
+    winner,
+    path
+  };
 }
