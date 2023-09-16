@@ -1,63 +1,6 @@
 import React, { useState } from "react";
-
-function Square({ value, onSquareClick, isWinSquare }) {
-  return (
-    <button
-      className={"square ".concat(isWinSquare ? "win-path" : "")}
-      onClick={onSquareClick}
-    >
-      {value}
-    </button>
-  );
-}
-
-function Row({ rowNo, cols, state, setState, winPath }) {
-  const indexes = [];
-  for (let c = 0; c < cols; c++) {
-    indexes.push(rowNo * cols + c);
-  }
-
-  return (
-    <div className="board-row">
-      {indexes.map((index, key) => (
-        <Square
-          key={key}
-          value={state[index]}
-          onSquareClick={() => setState(index)}
-          isWinSquare={winPath && winPath.includes(index)}
-        />
-      ))}
-    </div>
-  );
-}
-
-function Board({ rows, cols, xturn, squares, onPlay, winPath }) {
-  function handleClick(index) {
-    if (calculateWinner(squares).winner || squares[index]) return;
-
-    const nextSquares = squares.slice();
-    nextSquares[index] = xturn ? "X" : "O";
-    onPlay(nextSquares, index);
-  }
-
-  return (
-    <div>
-      {Array(rows)
-        .fill()
-        .map((_, i) => (
-          <Row
-            rowNo={i}
-            cols={cols}
-            state={squares}
-            setState={handleClick}
-            winPath={winPath}
-            key={i}
-          />
-        ))}
-    </div>
-  );
-}
-
+import Board from "./components/Board";
+import { calculateWinner } from "./utils";
 /*
   Challenges:
   1. [Done] For the current move only, show “You are at move #…” instead of a button.
@@ -81,7 +24,6 @@ export default function Game({ rows, cols }) {
     setIndexHistory([...indexHistory.slice(0, currentMove + 1), index]);
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
-    console.log(indexHistory);
   }
 
   function jumpTo(nextMove) {
@@ -133,32 +75,4 @@ export default function Game({ rows, cols }) {
       </div>
     </div>
   );
-}
-
-function calculateWinner(squares) {
-  let winner = null;
-  let path = null;
-
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      winner = squares[a];
-      path = [a, b, c];
-      break;
-    }
-  }
-  return {
-    winner,
-    path,
-  };
 }
