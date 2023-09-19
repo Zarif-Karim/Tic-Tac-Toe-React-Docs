@@ -1,6 +1,12 @@
 import React from "react";
 
-export default function Square({ value, onSquareClick, isWinSquare }) {
+export type SquareProps = {
+  value: string;
+  onSquareClick: () => void;
+  isWinSquare: boolean;
+};
+
+export default function Square({ value, onSquareClick, isWinSquare }: SquareProps) {
   return (
     <button
       className={"square ".concat(isWinSquare ? "win-path" : "")}

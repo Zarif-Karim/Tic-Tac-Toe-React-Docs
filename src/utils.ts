@@ -1,5 +1,5 @@
 // function to calculate the winner of tic-tac-toe game
-export function calculateWinner(squares) {
+export function calculateWinner(squares: Array<string>) {
   let winner = null;
   let path = null;
 

@@ -3,8 +3,17 @@ import React from "react";
 import Row from "./Row"
 import { calculateWinner } from "../utils";
 
-export default function Board({ rows, cols, xturn, squares, onPlay, winPath }) {
-  function handleClick(index) {
+interface BoardProps {
+  rows: number;
+  cols: number;
+  xturn: boolean;
+  squares: string[];
+  onPlay: (squares: string[], index: number) => void;
+  winPath: number[] | null;
+};
+
+export default function Board({ rows, cols, xturn, squares, onPlay, winPath }: BoardProps) {
+  function handleClick(index: number) {
     if (calculateWinner(squares).winner || squares[index]) return;
 
     const nextSquares = squares.slice();
@@ -15,7 +24,7 @@ export default function Board({ rows, cols, xturn, squares, onPlay, winPath }) {
   return (
     <div>
       {Array(rows)
-        .fill()
+        .fill(null)
         .map((_, i) => (
           <Row
             rowNo={i}

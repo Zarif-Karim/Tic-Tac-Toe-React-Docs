@@ -9,30 +9,34 @@ import { calculateWinner } from "./utils";
   4. [Done] When someone wins, highlight the three squares that caused the win (and when no one wins, display a message about the result being a draw).
   5. [Done] Display the location for each move in the format (row, col) in the move history list.
 */
+type GameProps = {
+  rows: number;
+  cols: number;
+};
 
-export default function Game({ rows, cols }) {
+export default function Game({ rows, cols }: GameProps) {
   const [history, setHistory] = useState([Array(rows * cols).fill(null)]);
-  const [indexHistory, setIndexHistory] = useState([null]);
+  const [indexHistory, setIndexHistory] = useState<(number|null)[]>([null]);
   const [currentMove, setCurrentMove] = useState(0);
   const xturn = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
   const [isAscending, setIsAscending] = useState(true);
 
-  function handlePlay(nextSquares, index) {
+  function handlePlay(nextSquares: string[], index: number) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setIndexHistory([...indexHistory.slice(0, currentMove + 1), index]);
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
   }
 
-  function jumpTo(nextMove) {
+  function jumpTo(nextMove: number) {
     setCurrentMove(nextMove);
   }
 
   const moves = history.map((_, move) => {
-    const row = Math.floor(indexHistory[move] / 3) + 1;
-    const col = (indexHistory[move] % 3) + 1;
+    const row = Math.floor(indexHistory[move]! / 3) + 1;
+    const col = (indexHistory[move]! % 3) + 1;
     const desc = move ? `Go to move #${move}: (${row} ${col})` : "Go to game start";
     return (
       <li key={move}>
